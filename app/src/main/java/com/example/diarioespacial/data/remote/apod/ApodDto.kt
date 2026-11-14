@@ -3,10 +3,16 @@ package com.example.diarioespacial.data.remote.apod
 import com.google.gson.annotations.SerializedName
 
 /**
- * Respuesta de la API APOD (Astronomy Picture of the Day) para un día.
+ * Respuesta de la API APOD (Astronomy Picture of the Day) para un día,
+ * en el formato de la nueva API de science.nasa.gov.
  *
- * Todos los campos son nullable porque la API no siempre los envía
- * (por ejemplo, copyright o hdurl faltan en muchas imágenes).
+ * Los nombres de los campos son los mismos que en la API antigua, pero cambia
+ * su significado:
+ * - url: página del artículo en science.nasa.gov (NO es la imagen).
+ * - hdurl: la imagen real (.jpg/.png). En los videos es una miniatura.
+ * - explanation y copyright: vienen con etiquetas HTML.
+ *
+ * Todos los campos son nullable porque la API puede no enviarlos.
  * Cada campo lleva @SerializedName para que Gson los encuentre también
  * en la versión release optimizada (R8 renombra los campos sin anotación).
  */

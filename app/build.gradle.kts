@@ -1,9 +1,19 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     // KSP: necesario para el compilador de Room
     alias(libs.plugins.ksp)
 }
+
+// Lee la clave de la API de la NASA desde local.properties (archivo NO versionado).
+// Si no existe, se usa "DEMO_KEY" para que el proyecto compile igualmente.
+val localProperties = Properties().apply {
+    val archivo = rootProject.file("local.properties")
+    if (archivo.exists()) archivo.inputStream().use { load(it) }
+}
+val nasaApiKey: String = localProperties.getProperty("NASA_API_KEY") ?: "DEMO_KEY"
 
 android {
     namespace = "com.example.diarioespacial"
@@ -19,6 +29,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Expone la clave como BuildConfig.NASA_API_KEY
+        buildConfigField("String", "NASA_API_KEY", "\"$nasaApiKey\"")
     }
 
     buildTypes {
@@ -35,6 +48,8 @@ android {
     }
     buildFeatures {
         compose = true
+        // Necesario para generar la clase BuildConfig
+        buildConfig = true
     }
 }
 

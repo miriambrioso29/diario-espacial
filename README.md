@@ -7,7 +7,7 @@ App Android hecha con Kotlin y Jetpack Compose. Consume dos servicios de la NASA
 | Alumno | Nombre | Opción |
 |---|---|---|
 | Alumno 1 | Miriam Brioso | Imágenes (APOD) |
-| Alumno 2 | Mijhail | Asteroides (NeoWs) |
+| Alumno 2 | Mijhail Medina | Asteroides (NeoWs) |
 
 ## Descripción de la app
 

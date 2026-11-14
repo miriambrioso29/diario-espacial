@@ -8,12 +8,12 @@ plugins {
 }
 
 // Lee la clave de la API de la NASA desde local.properties (archivo NO versionado).
-// Si no existe, se usa "DEMO_KEY" para que el proyecto compile igualmente.
+// Si no está definida, queda como cadena vacía (las peticiones a la API fallarán).
 val localProperties = Properties().apply {
     val archivo = rootProject.file("local.properties")
     if (archivo.exists()) archivo.inputStream().use { load(it) }
 }
-val nasaApiKey: String = localProperties.getProperty("NASA_API_KEY") ?: "DEMO_KEY"
+val nasaApiKey: String = localProperties.getProperty("NASA_API_KEY") ?: ""
 
 android {
     namespace = "com.example.diarioespacial"

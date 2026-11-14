@@ -44,4 +44,4 @@ La clave de la NASA **no se sube al repositorio**. Cada integrante debe:
 
 3. Sincronizar Gradle. La clave queda disponible en el código como `BuildConfig.NASA_API_KEY`, y `RetrofitInstance` la añade automáticamente a todas las peticiones.
 
-Si no se define, se usa `DEMO_KEY`, que funciona pero con un límite de peticiones muy bajo.
+Si no se define, `BuildConfig.NASA_API_KEY` queda como cadena vacía: el proyecto compila, pero las peticiones a la API fallarán.

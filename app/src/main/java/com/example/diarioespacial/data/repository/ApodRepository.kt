@@ -37,15 +37,23 @@ class ApodRepository(
         dao.actualizarFavorita(date, esFavorita)
 
     /**
-     * Descarga las imágenes de los últimos 7 días y las guarda en Room
-     * conservando los favoritos. Devuelve el error en lugar de lanzarlo para
-     * que el ViewModel decida qué mostrar.
+     * Descarga las imágenes de los últimos 7 días y reemplaza con ellas los datos
+     * guardados en Room, conservando los favoritos. Devuelve el error en lugar de
+     * lanzarlo para que el ViewModel decida qué mostrar.
      */
     suspend fun refrescar(): Result<Unit> {
         return try {
             val (inicio, fin) = rangoUltimos7Dias()
             val respuesta = servicio.obtenerImagenes(startDate = inicio, endDate = fin)
-            dao.guardarConservandoFavoritos(respuesta.toEntities())
+            // La nueva API ignora start_date/end_date y devuelve las últimas
+            // publicaciones, así que aquí se quedan solo las del rango pedido.
+            // Las fechas AAAA-MM-DD se pueden comparar como texto.
+            val imagenes = respuesta.toEntities().filter { it.date in inicio..fin }
+            // Si la API no trajo ninguna del rango, se conserva lo que había
+            // en lugar de dejar la lista vacía.
+            if (imagenes.isNotEmpty()) {
+                dao.reemplazarConservandoFavoritos(imagenes)
+            }
             Result.success(Unit)
         } catch (e: CancellationException) {
             // Si se cancela la corrutina (p. ej. se cierra la pantalla) no es un error real

@@ -38,17 +38,27 @@ interface ApodDao {
     @Upsert
     suspend fun upsert(imagenes: List<ApodEntity>)
 
+    /** Borra todas las imágenes que NO están marcadas como favoritas. */
+    @Query("DELETE FROM apod WHERE isFavorite = 0")
+    suspend fun borrarNoFavoritas()
+
     /**
-     * Guarda las imágenes recibidas de la API SIN perder el estado de favorito.
+     * Reemplaza los datos guardados por los recibidos de la API SIN perder favoritos.
      *
-     * Los datos que llegan de la API siempre traen isFavorite = false, así que
-     * antes de guardarlos se copia el valor que ya estaba en la base de datos.
-     * Se hace dentro de una transacción para que nadie cambie un favorito
-     * entre la lectura y la escritura.
+     * 1. Se apuntan las fechas que estaban marcadas como favoritas.
+     * 2. Se borran las imágenes que no son favoritas: así desaparecen los datos
+     *    viejos (por ejemplo, el contenido genérico "NASA Science" de la API antigua)
+     *    aunque su fecha ya no venga en la respuesta.
+     * 3. Se guardan las nuevas copiando el isFavorite que tenían. Si una favorita
+     *    viene en la respuesta, su contenido se actualiza y sigue siendo favorita.
+     *
+     * Todo ocurre en una transacción: si algo falla no se borra nada, y Room
+     * emite un único cambio, así la lista no parpadea vacía.
      */
     @Transaction
-    suspend fun guardarConservandoFavoritos(imagenes: List<ApodEntity>) {
+    suspend fun reemplazarConservandoFavoritos(imagenes: List<ApodEntity>) {
         val favoritas = obtenerFechasFavoritas().toSet()
+        borrarNoFavoritas()
         upsert(imagenes.map { it.copy(isFavorite = it.date in favoritas) })
     }
 }

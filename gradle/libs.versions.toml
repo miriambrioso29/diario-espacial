@@ -16,7 +16,7 @@ room = "2.8.5"
 ksp = "2.3.14"
 # Navegación, imágenes, ViewModel e iconos
 navigationCompose = "2.10.2"
-coil = "3.6.3"
+coil = "3.4.0"
 lifecycleViewmodelCompose = "2.11.0"
 materialIconsExtended = "1.7.8"
 
